@@ -17,16 +17,16 @@ class ParentNode:
 
 
 class Node(object):
-    def __init__(self, num, nextNode=None):
-        self.__num = num
+    def __init__(self, data, nextNode=None):
+        self.__data = data
         self.nextNode = nextNode
     #self.__prev = None
-    #return self.__num
+    #return self.__data
 
-    def getNum(self):
-        return self.__num
+    def getData(self):
+        return self.__data
     #def __str__(self):
-     #   return str(self.__num)
+     #   return str(self.__data)
 
 #Skapar en queue.
 class LinkedQ:
@@ -35,8 +35,8 @@ class LinkedQ:
         self.last = self.first
         self.length = 0
 
-    def enqueue(self, num):
-        newNode = Node(num)
+    def enqueue(self, data):
+        newNode = Node(data)
         if self.first == None:
             self.first = newNode
             self.last = newNode
@@ -46,15 +46,25 @@ class LinkedQ:
             self.last = newNode
         self.length += 1
 
+    def addFront(self, data):
+        newNode = Node(data)
+        if self.first == None:
+            self.first = newNode
+            self.last = newNode
+        else:
+            newNode.nextNode = self.first
+            self.first = newNode
+            self.length +=1
+
     def dequeue(self):
         if self.first:
-            out = self.first.getNum()
+            out = self.first.getData()
             self.first = self.first.nextNode
             self.length -= 1
             return out
     def peek(self):
         if not self.isEmpty():
-            return self.first.getNum()
+            return self.first.getData()
         else:
             return None
     def isEmpty(self):
