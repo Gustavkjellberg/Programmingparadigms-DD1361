@@ -42,7 +42,8 @@ class Lexer:
         tokens = ['FORW', 'BACK', 'LEFT', 'RIGHT', 'UP','HEXA', 'DOWN', 'REP', 'WHITESPACE', 'SPACE' 'QUOTE', 'COLOR', 'NUMBER', 'DOT', 'COMMA', 'INVALID']
         text = re.compile('[a-zA-Z]')
         number = re.compile('[0-9]')
-        q = LinkedQ()
+        self.q = LinkedQ()
+        self.q.peek()
         self.inp = self.inp.upper()
         word = ""
         i = 0
@@ -53,56 +54,60 @@ class Lexer:
                 if i == len(self.inp)-1:
                     if not word is "":
                         if word in tokens:
-                            q.enqueue(Token(word, word))
+                            self.q.enqueue(Token(word, word))
                         else:
-                            q.enqueue(Token('INVALID', word))
+                            self.q.enqueue(Token('INVALID', word))
 
             elif number.match(x):
                 word += word + str(x)
                 if i == len(self.inp)-1:
                     if not word is "":
+                        print(word)
                         if word in tokens:
-                            q.enqueue(Token('NUMBER', int(word)))
+                            self.q.enqueue(Token('NUMBER', int(word)))
                         else:
-                            q.enqueue(Token('INVALID', word))
-                #q.enqueue(Token('NUMBER', word))
+                            self.q.enqueue(Token('INVALID', word))
+                #self.q.enqueue(Token('NUMBER', word))
 
 
 
             else:
                 if not word is "":
-                    if word in tokens:
-                        q.enqueue(Token(word, word))
+                    if number.match(word):
+                        self.q.enqueue(Token('NUMBER', word))
+                    elif word in tokens:
+                        self.q.enqueue(Token(word, word))
                     else:
-                        q.enqueue(Token('INVALID', word))
-
+                        self.q.enqueue(Token('INVALID', word))
 
                 word = x
                 if word == '.':
-                    q.enqueue(Token('DOT', word))
+                    self.q.enqueue(Token('DOT', word))
                 elif word == ' ':
-                    q.enqueue(Token('SPACE', word))
+                    self.q.enqueue(Token('SPACE', word))
                 elif word == '\n':
-                    q.enqueue(Token('NEWLINE', word))
+                    self.q.enqueue(Token('NEWLINE', word))
                 elif word == '"':
-                    q.enqueue(Token('QUOTE', word))
+                    self.q.enqueue(Token('QUOTE', word))
                 elif word == ',':
-                    q.enqueue(Token('COMMA', word))
+                    self.q.enqueue(Token('COMMA', word))
                 elif word == '#':
-                    iHex = 1
-                    while iHex <= 7:        #DETTA KAN VARA BRUTALFEL!!!!!
+                    print("ADSHUUDHALW")
+                    iHex = i+1
+                    while iHex <= i+6:        #DETTA KAN VARA BRUTALFEL!!!!!
                         word += self.inp[iHex]
+                        iHex +=1
                     i += 6
-                    q.enqueue(Token('HEXA', word))
+                    self.q.enqueue(Token('HEXA', word))
                 else:
-                    q.enqueue(Token('INVALID', word))
+                    self.q.enqueue(Token('INVALID', word))
                 word =""
             i += 1
 
-        #tree = parser(q)
-        #test = Parser(q)
+        #tree = parser(self.q)
+        #test = Parser(self.q)
         #test.read()
-        return q
+        return self.q
 
         #return kö(object(typ,data)......)
 
@@ -115,18 +120,18 @@ class Parser:
 
     def __init__(self, q):
         self.q = q
+        self.line = 1
 
 
 
 
 
     def read(self):
-        line = 0
         #forw = re.compile('F''O''R''W')
         #back = re.compile('B''A''C''K')
         #left = re.compile('L''E''F''T')
         #right = re.compile('R''I''G''H''T')
-        movement = ['FORW', 'BACKW', 'LEFT', 'RIGHT']
+        movement = ['FORW', 'BACK', 'LEFT', 'RIGHT']
         pen = ['UP', 'DOWN']
         #space = re.compile('S''P''A''C''E')
         #newLine = re.compile('N''E''W''L''I''N''E')
@@ -135,146 +140,173 @@ class Parser:
         #color = re.compile('C''O''L''O''R')
         #hexNumber = re.compile('[#]')
 
-
         pt = self.q.peek()
         pt = pt.getType()
+        #print(pt)
         if pt in movement:
-            print("rörelse")
             mvmnt = self.q.dequeue()
             pt = self.q.peek()
             pt = pt.getType()
             print(pt)
             if pt is 'SPACE':
-                line = ws(line)             #skall kolla om space/tab eller \n. returnera kö och ev. ny rad
-                number = digit(line)        #Kolla siffror, returnera tal.
-                line = ws(line)
-                dot(line)                  # Kollar om det är en punkt äter och returnerar kö
-                line = ws(line)
-                read()                                      #rekursivt anrop, här skall nod läggas till
+                self.line = self.ws(self.line)           #skall kolla om space/tab eller \n. returnera kö och ev. ny rad
+                number = self.digit(self.line)        #Kolla siffror, returnera tal.
+                self.line = self.ws(self.line)
+                print("HEJ")
+                print(self.q.peek())
+                self.dot(self.line)                  # Kollar om det är en punkt äter och returnerar kö
+                print("DÅ")
+                self.line = self.ws(self.line)
+                #self.read(self.q)                                      #rekursivt anrop, här skall nod läggas till
             else:
-                raise SyntaxError('Fel på rad ' + str(line))#om fel raisea fel
+                raise SyntaxError('Fel på rad ' + str(self.line))#om fel raisea fel
 
         elif pt in pen:
             print('Pen')
             penState = self.q.dequeue()
-            line = ws(line)
-            dot(line)
-            line = ws(line)
-            read() # rekursivt antop, här skall nod läggas till
+            self.line = self.ws(self.line)
+            self.dot(self.line)
+            self.line = self.ws(self.line)
+             # rekursivt antop, här skall nod läggas till
 
-        elif pt is 'COLOR':
+        elif pt == 'COLOR':
             print('Color')
             color = self.q.dequeue()
-            line = ws(line)
-            hex = hexCol(line)
-            line = ws(line)
-            dot(line)
-            line = ws(line)
+            self.line = self.ws(self.line)
+            hex = self.hexCol(self.line)
+            self.line = self.ws(self.line)
+            self.dot(self.line)
+            self.line = self.ws(self.line)
             #här skall node med 'color' hex skapas
-            read()
 
-        elif pt is 'REP':
-            rep = q.dequeue()
-            line = ws(line)
-            number = digit(line)
-            line = ws(line)
-            line = rep(line, number.getData())
-            line = ws(line)
-            read()
+        elif pt == 'REP':
+            rep = self.q.dequeue()
+            self.line = self.ws(self.line)
+            number = self.digit(self.line)
+            self.line = self.ws(self.line)
+            self.line = self.rep(self.line, number.getData())
+            self.line = self.ws(self.line)
 
         elif pt == 'INVALID':
-            q.dequeue
-            line = ws(line)
-            if self.q.peek() is '%':
-                line = cmnt(line)   #while not \n, eat.
-                read()
+            self.q.dequeue
+            self.line = self.ws(self.line)
+            if self.q.peek().getData() is '%':
+                self.line = self.cmnt(self.line)   #while not \n, eat.
             else:
-                raise SyntaxError('Fel på rad' + str(line))
+                raise SyntaxError('Fel på rad ' + str(self.line))
 
 
-        elif pt is 'NEWLINE':
-            line +=1
+        elif pt == 'NEWLINE':
+            self.line +=1
             self.q.dequeue()
-            read()
 
-        elif pt is 'SPACE':
-            line = ws(line)
-            read()
+        elif pt == 'SPACE':
+            self.line = self.ws(self.line)
 
 
 
         else:
-            raise SyntaxError('Du gjorde något sjukt fel')
+            raise SyntaxError('Fel på rad ' + str(self.line))
 
 
 
 
     def ws(self, line):
-        pt = self.q.peek().getToken
-        if pt is 'SPACE':
-            q.dequeue
-        if pt is 'NEWLINE':
-            line +=1
-            line = ws(line)
-        return line
+        if self.q.peek():
+            pt = self.q.peek().getType()
+            while pt is 'SPACE':
+                self.q.dequeue()
+                pt = self.q.peek().getType()
+            if pt is 'NEWLINE':
+                self.q.dequeue()
+                self.line +=1
+                print(self.line)
+                self.line = self.ws(self.line)
+        return self.line
 
     def cmnt(self, line):
-        pt = self.q.peek().getToken
-        if self.q.isEmpty()
-            return line
+        pt = self.q.peek().getType()
+        if self.q.isEmpty():
+            return self.line
         if pt is 'NEWLINE':
-            return line += 1
-
+            self.line += 1
+            return self.line
         while not pt is 'NEWLINE':
+            pt = self.q.peek().getType()
+            if self.q.isEmpty():
+                return self.line
             self.q.dequeue()
-        return cmnt(line)
+        self.line += 1
+        return self.line
 
     def rep(self, line, number):
-
-        pt = self.q.peek().getToken
-
+        number = int(number)
+        pt = self.q.peek().getType()
+        print(pt)
+        tempQ = []
         if pt is '"':
-            q.dequeue()
-            dq = []
+            self.q.dequeue()
             while not pt is '"':
-                line = ws(line)
-                dq.append(q.dequeue())
+                self.line = ws(self.line)    #FIXA SOM UNDER
+                tempQ.append(self.q.dequeue())
         else:
-            dq.append(q.dequeue())
-            line = ws(line)
-            dq.append(q.dequeue())
-            line = ws(line)
-            dq.append(q.dequeue())
-        dq.reverse()
+            tempQ.append(self.q.dequeue())
+            pt = self.q.dequeue().getType()
+            if pt == 'SPACE':
+                self.line = self.ws(self.line)
+                tempQ.append(Token('SPACE', ' '))
+            else:
+                return False
+            tempQ.append(self.q.dequeue())
+            self.line = self.ws(self.line)
+            tempQ.append(self.q.dequeue())
 
+
+        tempQ.reverse()
         while number > 0:
-            for elem in dq:
-                q.addFront(elem)
+            for elem in tempQ:
+                if elem:
+                    self.q.addFront(elem)
             number -= 1
-        return line
+        i = 0
+        while i < 12:
+            print(self.q.dequeue().getType()+ "   jejeje")
+            i+=1
+        return self.line
 
     def digit(self, line):
-        pt = self.q.peek().getToken
+        pt = self.q.peek().getType()
+        print (pt)
         if pt is 'NUMBER':
-            return q.dequeue()
+            return self.q.dequeue()
         else:
-            raise SyntaxError('Fel på rad' + str(line))
+            raise SyntaxError('Fel på rad ' + str(self.line))
 
     def hexCol(self, line):
         hexSigns = re.compile('[A-F0-9]')
         pt = self.q.peek()
-
         hexnr = ""
+        print(pt.getType())
         if pt.getType() is 'HEXA':
             iHex = 1
-            while iHex <= 7:
+            while iHex <= 6:
                 if hexSigns.match(pt.getData()[iHex]):
+                    iHex +=1
                     pass
                 else:
-                    raise SyntaxError('Fel på rad' + str(line))
-            return q.dequeue()
+                    raise SyntaxError('Fel på rad' + str(self.line))
+            return self.q.dequeue()
         else:
-            raise SyntaxError('Fel på rad' + str(line))
+            raise SyntaxError('Fel på rad ' + str(self.line))
+
+
+    def dot(self, line):
+        pt = self.q.peek().getType()
+        if pt is 'DOT':
+            self.q.dequeue()
+            return
+        else:
+            raise SyntaxError('Fel på rad ' + str(self.line))
 
 
 
@@ -309,13 +341,17 @@ def initializer(input):
         x = Lexer(input)
         q = x.checkType()
         y = Parser(q)
-        tree = y.read()
+        i = 0
+        while not q.isEmpty():
+            i +=1
+            print(i)
+            tree = y.read()
     except SyntaxError as inst:
         print(inst)
 
 
 
-initializer('FORW 1. Down 3. Up. Down. Rep 5 " ')
-#while not q.isEmpty():
- #   y = q.dequeue()
+initializer('REP 3 FORW 1.')
+#while not self.q.isEmpty():
+ #   y = self.q.dequeue()
   #  print (y.getType())
