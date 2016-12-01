@@ -48,13 +48,9 @@ class LinkedQ:
 
     def addFront(self, data):
         newNode = Node(data)
-        if self.first == None:
-            self.first = newNode
-            self.last = newNode
-        else:
-            newNode.nextNode = self.first
-            self.first = newNode
-            self.length +=1
+        newNode.nextNode = self.first
+        self.first = newNode
+        self.length +=1
 
     def dequeue(self):
         if self.first:

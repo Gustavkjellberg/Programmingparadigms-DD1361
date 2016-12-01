@@ -21,3 +21,40 @@ while True:
     """
     client_connection.sendall(bytes(http_response, 'utf-8'))
     client_connection.close()
+
+
+
+
+    import socket
+import sys
+from _thread import *
+
+host, port = '', 5555
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+try:
+    s.bind((host, port))
+except socket.error as e:
+    print(str(e))
+
+s.listen(5)
+print('Connecting to bank...')
+
+def threaded_client(connection):
+    connection.send(str.encode('Welcome to bank, what would you like to do \n Check balance (1) \n Withdrawal (2) \n Deposit(3) \n Exit(4)'))
+
+    #infinite loop to keep connection running and up to date
+    while True:
+        #10 bytes
+        data = connection.recv(10)
+        reply = 'Your OPTION was finished, your current balance is:...'
+        if not data:
+            break
+        connection.sendall(str.encode(reply))
+    connection.close()
+
+while True:
+    connection, adress = s.accept()
+    print('Connected to: ' +adress[0]+ ':' + str(adress[1]))
+
+    start_new_thread(threaded_client, (connection,))
