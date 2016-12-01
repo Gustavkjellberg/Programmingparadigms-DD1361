@@ -70,8 +70,8 @@
       <file leaf-file-name="udpclient.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/udpclient.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="195">
-              <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
+            <state relative-caret-position="105">
+              <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -834,17 +834,25 @@
 =======
       <workItem from="1480450198523" duration="3194000" />
       <workItem from="1480509510735" duration="3612000" />
+<<<<<<< Updated upstream
       <workItem from="1480519926000" duration="6185000" />
 >>>>>>> origin/master
+=======
+      <workItem from="1480519926000" duration="6187000" />
+>>>>>>> Stashed changes
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
+<<<<<<< Updated upstream
 <<<<<<< HEAD
     <option name="totallyTimeSpent" value="3456000" />
 =======
     <option name="totallyTimeSpent" value="12991000" />
 >>>>>>> origin/master
+=======
+    <option name="totallyTimeSpent" value="12993000" />
+>>>>>>> Stashed changes
   </component>
   <component name="ToolWindowManager">
     <frame x="363" y="23" width="935" height="1027" extended-state="0" />
@@ -969,8 +977,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/udpclient.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="195">
-          <caret line="14" column="48" selection-start-line="14" selection-start-column="48" selection-end-line="14" selection-end-column="48" />
+        <state relative-caret-position="105">
+          <caret line="8" column="0" selection-start-line="8" selection-start-column="0" selection-end-line="8" selection-end-column="0" />
           <folding>
             <element signature="e#0#13#0" expanded="true" />
           </folding>
