@@ -3,23 +3,29 @@ import threading
 import os
 
 def RetrFile(name, sock):
-    print("hej")
     filename = sock.recv(1024)
     filename.decode('utf-8')
     print(filename)
     if os.path.isfile(filename):
-        print("HÄR SKA VI VA")
         msg = b'Exists'
         #sock.send(msg.encode('utf-8'))
         sock.send(b'Exists')
         menuChoice = sock.recv(1024)
         menuChoice.decode('utf-8')
         if menuChoice[:1] != '4':
-            with open(filename, 'r') as f:
-                ammount = f.read(1024)
-                sock.send(ammount.encode('utf-8'))
+            f = open(filename, 'r+')
+            amount = f.read(1024)
+            f.close()
+            sock.send(amount.encode('utf-8'))
+            newAmount = sock.recv(1024).decode('utf-8')
+            if newAmount != "":
+                f = open(filename, 'w')
+                print (newAmount+ '   ---------')
+                f.write(newAmount)
+                f.close()
+            else:
+                print('no input')
     else:
-        print("WTF")
         msg = 'Error'
         sock.send(msg.encode('utf-8'))
     sock.close()
