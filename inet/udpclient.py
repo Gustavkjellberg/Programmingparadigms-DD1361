@@ -24,7 +24,6 @@ host = '127.0.0.1'
 port = 0
 
 server = (host, 5000)
-
 s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.bind((host, port))
 s.setblocking(0)
@@ -32,8 +31,9 @@ s.setblocking(0)
 rT = threading.Thread(target = receving, args = ("RecvThread", s))
 rT.start()
 
-alias = input("Name: ")
-message = input(alias + "-> ")
+alias = "Customer:   "
+message = input("Svenska (1)\nEnglish(2)\nQuit(3)\n\n")
+#message = input()
 
 while message != 'q':
     if message == '4':
@@ -44,40 +44,8 @@ while message != 'q':
         tLock.acquire()
         message = input(alias + "-> ")
         tLock.release()
-
+        #kolla detta, kanske är anledningen till att det ligger i en cp loop där den börjar från början
 shutdown = True
 
 rT.join()
 s.close()
-
-
-
-
-
-
-
-"""def Main():
-
-    host = '127.0.0.1'
-    port = 5001
-
-    server = ((host, 5000))
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.bind((host, port))
-
-    message = input("-> ")
-
-    while message != 'q':
-        s.sendto(message.encode('utf-8'), server)
-        data, addr = s.recvfrom(1024)
-        data = data.decode('utf-8')
-        print("Recivied form server: " + data)
-        message = input("-> ")
-
-    s.close()
-
-
-
-if __name__ == '__main__':
-    Main()"""
