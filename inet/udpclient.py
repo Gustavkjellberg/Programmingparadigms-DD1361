@@ -49,3 +49,25 @@ shutdown = True
 
 rT.join()
 s.close()
+
+
+
+
+if menuChoice != '4':
+    f = open(filename, 'r')
+    amount = f.read(1024)
+    f.close()
+    sock.send(amount.encode('utf-8'))
+    print(menuChoice)
+    if menuChoice == '1':
+        #f = open(filename, 'w')
+        #f.write(amount)
+        #f.close()
+        newAmount = amount
+    elif menuChoice == '2' or '3':
+        newAmount = sock.recv(1024).decode('utf-8')
+    if newAmount != "":
+        f = open(filename, 'w')
+        print (newAmount+ '   ---------')
+        f.write(newAmount)
+        f.close()
